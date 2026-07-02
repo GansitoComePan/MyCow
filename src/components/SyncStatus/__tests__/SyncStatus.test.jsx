@@ -1,11 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SyncContext } from '../../../providers/SyncContext.js';
 import { SyncStatus } from '../SyncStatus.jsx';
 
-// SyncStatus lee del contexto vía useSyncStatus/useSyncContext; se inyecta
-// un valor mock directamente (sin montar SyncProvider real, que ataría el
-// motor/Supabase reales) — mismo patrón de DI que src/sync/__tests__.
 function renderWithContext(value) {
   return render(
     <SyncContext.Provider value={value}>
@@ -15,29 +12,24 @@ function renderWithContext(value) {
 }
 
 describe('SyncStatus', () => {
-  it('deshabilita el botón de sync manual cuando está offline', () => {
+  it('muestra offline con badge de pendientes', () => {
     renderWithContext({ isOnline: false, pendingCount: 3, isSyncing: false, lastPullAt: null, syncNow: vi.fn() });
 
     expect(screen.getByText('Sin conexión')).toBeInTheDocument();
-    expect(screen.getByText('3 pendientes')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Sincronizar/ })).toBeDisabled();
+    expect(screen.getByText('3 por sincronizar')).toBeInTheDocument();
   });
 
-  it('llama a syncNow() al hacer click estando online', () => {
-    const syncNow = vi.fn();
-    renderWithContext({ isOnline: true, pendingCount: 0, isSyncing: false, lastPullAt: null, syncNow });
+  it('muestra online y sincronizado cuando no hay pendientes', () => {
+    renderWithContext({ isOnline: true, pendingCount: 0, isSyncing: false, lastPullAt: null, syncNow: vi.fn() });
 
-    const button = screen.getByRole('button', { name: /Sincronizar/ });
-    expect(button).not.toBeDisabled();
-
-    fireEvent.click(button);
-    expect(syncNow).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('En línea')).toBeInTheDocument();
+    expect(screen.getByText('Sincronizado')).toBeInTheDocument();
   });
 
-  it('deshabilita el botón y muestra el spinner mientras isSyncing', () => {
-    renderWithContext({ isOnline: true, pendingCount: 1, isSyncing: true, lastPullAt: null, syncNow: vi.fn() });
+  it('muestra el badge con pendientes incluso estando online', () => {
+    renderWithContext({ isOnline: true, pendingCount: 5, isSyncing: false, lastPullAt: null, syncNow: vi.fn() });
 
-    expect(screen.getByRole('button')).toBeDisabled();
-    expect(screen.getByText('Sincronizando…')).toBeInTheDocument();
+    expect(screen.getByText('En línea')).toBeInTheDocument();
+    expect(screen.getByText('5 por sincronizar')).toBeInTheDocument();
   });
 });

@@ -37,6 +37,11 @@
   font-weight: 600;
 }
 
+.sync-status__synced {
+  color: var(--status-online);
+  font-weight: 600;
+}
+
 .sync-status__last-pull {
   color: var(--text-secondary);
   margin-right: auto;

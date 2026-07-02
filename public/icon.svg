@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#4d2712" rx="64"/>
+  <g stroke="#daccc0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Handle largo del fierro -->
+    <line x1="160" y1="440" x2="256" y2="320"/>
+    <!-- Aro en la punta del mango -->
+    <circle cx="140" cy="452" r="18"/>
+    <!-- Cabeza del fierro: forma de herradura abierta -->
+    <path d="M256 300 Q256 180 200 160 Q160 148 148 180 Q140 200 160 220 L220 270"/>
+    <path d="M256 300 Q256 180 312 160 Q352 148 364 180 Q372 200 352 220 L292 270"/>
+    <!-- Clavo/simetría central -->
+    <line x1="256" y1="280" x2="256" y2="200"/>
+    <!-- Travesaños decorativos -->
+    <line x1="200" y1="240" x2="312" y2="240"/>
+  </g>
+</svg>
