@@ -1,13 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { SyncContext } from '../../../providers/SyncContext.js';
 import { SyncStatus } from '../SyncStatus.jsx';
 
 function renderWithContext(value) {
   return render(
-    <SyncContext.Provider value={value}>
-      <SyncStatus />
-    </SyncContext.Provider>
+    <MemoryRouter>
+      <SyncContext.Provider value={value}>
+        <SyncStatus />
+      </SyncContext.Provider>
+    </MemoryRouter>
   );
 }
 

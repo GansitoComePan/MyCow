@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useSyncStatus } from '../../hooks/useSyncStatus.js';
 import { db as defaultDb } from '../../sync/db.js';
-import { capitalize } from '../../utils.js';
 import './SyncStatus.css';
 
 function formatLastPullAt(iso) {
@@ -18,7 +18,19 @@ function opLabel(o) {
   return { insert: 'Crear', update: 'Editar', delete: 'Retirar' }[o] ?? o;
 }
 
+const ENTITY_ROUTE = {
+  animales: '/animales',
+  potreros: '/potreros',
+  movimientos: '/animales',
+  defunciones: '/animales',
+  historial_categoria: '/animales',
+  eventos_reproductivos: '/animales',
+  fotos: '/animales',
+  ventas: '/',
+};
+
 export function SyncStatus({ db = defaultDb } = {}) {
+  const navigate = useNavigate();
   const { isOnline, pendingCount, isSyncing, lastPullAt, syncNow } = useSyncStatus();
   const [expanded, setExpanded] = useState(false);
 
@@ -26,6 +38,11 @@ export function SyncStatus({ db = defaultDb } = {}) {
     () => db.outbox.where('status').anyOf('pending', 'failed', 'waiting_ref').toArray(),
     [db]
   );
+
+  function handleItemClick(item) {
+    setExpanded(false);
+    navigate(ENTITY_ROUTE[item.entity] ?? '/');
+  }
 
   return (
     <div className="sync-status" data-online={isOnline}>
@@ -47,18 +64,24 @@ export function SyncStatus({ db = defaultDb } = {}) {
       {expanded && pendingItems && pendingItems.length > 0 && (
         <ul className="sync-status__pending-list">
           {pendingItems.map((item) => (
-            <li key={item.id} className="sync-status__pending-item" data-status={item.status}>
-              <span className="sync-status__item-op">{opLabel(item.op)}</span>
-              <span className="sync-status__item-entity">{entityLabel(item.entity)}</span>
-              <span className="sync-status__item-id">{item.client_id?.slice(0, 8)}</span>
-              {item.status === 'failed' && item.last_error && (
-                <span className="sync-status__item-error" title={item.last_error}>
-                  {item.last_error.length > 50 ? item.last_error.slice(0, 50) + '…' : item.last_error}
-                </span>
-              )}
-              {item.status === 'waiting_ref' && (
-                <span className="sync-status__item-waiting">esperando referencia</span>
-              )}
+            <li key={item.id}>
+              <button
+                className="sync-status__pending-item"
+                data-status={item.status}
+                onClick={() => handleItemClick(item)}
+              >
+                <span className="sync-status__item-op">{opLabel(item.op)}</span>
+                <span className="sync-status__item-entity">{entityLabel(item.entity)}</span>
+                <span className="sync-status__item-id">{item.client_id?.slice(0, 8)}</span>
+                {item.status === 'failed' && item.last_error && (
+                  <span className="sync-status__item-error" title={item.last_error}>
+                    {item.last_error.length > 50 ? item.last_error.slice(0, 50) + '…' : item.last_error}
+                  </span>
+                )}
+                {item.status === 'waiting_ref' && (
+                  <span className="sync-status__item-waiting">esperando referencia</span>
+                )}
+              </button>
             </li>
           ))}
         </ul>

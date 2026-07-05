@@ -71,10 +71,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  width: 100%;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   font-size: 12px;
   background: var(--bg-surface);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
 }
 
 .sync-status__pending-item[data-status="failed"] {
@@ -83,6 +89,10 @@
 
 .sync-status__pending-item[data-status="waiting_ref"] {
   border-left: 3px solid var(--status-warning, #d69e2e);
+}
+
+.sync-status__pending-item:hover {
+  background: var(--bg-surface-hover, color-mix(in srgb, var(--bg-surface) 80%, var(--brand-primary)));
 }
 
 .sync-status__item-op {
