@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { capitalize } from '../../utils.js';
 
 function describeAnimal(a) {
   const arete = a.arete_local ? `Arete ${a.arete_local}` : 'sin arete';
-  return `${arete} — ${a.categoria}`;
+  return `${arete} — ${capitalize(a.categoria)}`;
 }
 
 /**

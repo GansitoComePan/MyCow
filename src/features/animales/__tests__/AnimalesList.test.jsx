@@ -72,12 +72,11 @@ describe('AnimalesList', () => {
     expect(within(row).getByText('Potrero actual').nextSibling).toHaveTextContent('El Jagüey');
   });
 
-  it('filtra por categoría client-side', async () => {
+  it('filtra por categoría mediante tabs', async () => {
     render(<AnimalesList db={db} />);
     await screen.findAllByRole('listitem');
 
-    const categoriaSelect = screen.getByLabelText('Categoría');
-    fireEvent.change(categoriaSelect, { target: { value: 'cria' } });
+    fireEvent.click(screen.getByText('Crías'));
 
     await waitFor(() => {
       expect(screen.getAllByRole('listitem')).toHaveLength(2);

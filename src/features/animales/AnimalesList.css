@@ -32,6 +32,35 @@
   opacity: 0.5;
 }
 
+.animales-list__tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.animales-list__tab {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.animales-list__tab:hover {
+  color: var(--brand-primary);
+}
+
+.animales-list__tab--active {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+}
+
 .animales-list__status {
   padding: var(--space-5) var(--space-4);
   text-align: center;

@@ -116,6 +116,6 @@ describe('AnimalesList — eventos terminales', () => {
 
     expect(await screen.findByText('Arete 50')).toBeInTheDocument();
     const row = screen.getByText('Arete 50').closest('li');
-    expect(row).toHaveTextContent('muerto');
+    expect(row).toHaveTextContent('Muerto');
   });
 });

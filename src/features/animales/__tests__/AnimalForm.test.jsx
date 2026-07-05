@@ -26,7 +26,7 @@ describe('AnimalForm', () => {
     const onClose = vi.fn();
     render(<AnimalForm db={db} onClose={onClose} />);
 
-    fireEvent.change(screen.getByLabelText('Arete local'), { target: { value: '55' } });
+    fireEvent.change(screen.getByLabelText('Arete morado'), { target: { value: '55' } });
     fireEvent.change(screen.getByLabelText('Categoría *'), { target: { value: 'vaca' } });
     fireEvent.change(screen.getByLabelText('Sexo'), { target: { value: 'hembra' } });
 
@@ -110,7 +110,8 @@ describe('AnimalesList — integración con AnimalForm', () => {
     });
 
     render(<AnimalesList db={db} />);
-    fireEvent.click(await screen.findByRole('button', { name: /Editar animal, arete 20/ }));
+    await screen.findByText('Arete 20');
+    fireEvent.click(screen.getByRole('button', { name: /Editar animal, arete 20/ }));
 
     expect(await screen.findByText('Editar animal')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('20')).toBeInTheDocument();
@@ -121,7 +122,7 @@ describe('AnimalesList — integración con AnimalForm', () => {
 
     fireEvent.click(screen.getByText('+ Nuevo'));
     fireEvent.change(await screen.findByLabelText('Categoría *'), { target: { value: 'vaca' } });
-    fireEvent.change(screen.getByLabelText('Arete local'), { target: { value: '80' } });
+    fireEvent.change(screen.getByLabelText('Arete morado'), { target: { value: '80' } });
     fireEvent.click(screen.getByText('Guardar'));
 
     await waitFor(() => expect(screen.queryByText('Nuevo animal')).not.toBeInTheDocument());

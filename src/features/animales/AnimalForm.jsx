@@ -89,7 +89,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
         raza: rec.raza ?? '',
         color: rec.color ?? '',
         fecha_nacimiento: rec.fecha_nacimiento ?? '',
-        estado_reproductivo: rec.estado_reproductivo ?? 'horra',
+        estado_reproductivo: rec.estado_reproductivo ?? (rec.sexo === 'hembra' ? 'horra' : null),
         madre_id: rec.madre_id ?? null,
         padre_id: rec.padre_id ?? null,
         potrero_actual_id: rec.potrero_actual_id ?? null,
@@ -127,7 +127,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
       raza: blankToNull(form.raza),
       color: blankToNull(form.color),
       fecha_nacimiento: form.fecha_nacimiento || null,
-      estado_reproductivo: form.estado_reproductivo || 'na',
+      estado_reproductivo: form.sexo === 'hembra' ? (form.estado_reproductivo || 'na') : null,
       madre_id: form.madre_id || null,
       padre_id: form.padre_id || null,
       potrero_actual_id: form.potrero_actual_id || null,
@@ -173,7 +173,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
 
         <div className="animal-form__body">
           <label className="animal-form__field">
-            <span>Arete local</span>
+            <span>Arete morado</span>
             <input
               type="text"
               value={form.arete_local}
@@ -239,19 +239,21 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
             />
           </label>
 
-          <label className="animal-form__field">
-            <span>Estado reproductivo</span>
-            <select
-              value={form.estado_reproductivo}
-              onChange={(e) => setField('estado_reproductivo', e.target.value)}
-            >
-              {ESTADO_REPROD_OPTIONS.map((s) => (
-                <option key={s} value={s}>
-                  {capitalize(s)}
-                </option>
-              ))}
-            </select>
-          </label>
+          {form.sexo === 'hembra' && (
+            <label className="animal-form__field">
+              <span>Estado reproductivo</span>
+              <select
+                value={form.estado_reproductivo}
+                onChange={(e) => setField('estado_reproductivo', e.target.value)}
+              >
+                {ESTADO_REPROD_OPTIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {capitalize(s)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
 
           <ParentSelect
             label="Madre"

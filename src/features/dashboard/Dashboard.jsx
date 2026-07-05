@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db as defaultDb } from '../../sync/db.js';
+import { capitalize } from '../../utils.js';
 import './Dashboard.css';
 
 export function Dashboard({ db = defaultDb }) {
@@ -46,7 +47,7 @@ export function Dashboard({ db = defaultDb }) {
         {Object.entries(porCategoria).map(([cat, count]) => (
           <div key={cat} className="dashboard__card dashboard__card--sm">
             <span className="dashboard__card-value">{count}</span>
-            <span className="dashboard__card-label">{cat}</span>
+            <span className="dashboard__card-label">{capitalize(cat)}</span>
           </div>
         ))}
       </div>
@@ -56,7 +57,7 @@ export function Dashboard({ db = defaultDb }) {
         {Object.entries(porEstado).map(([est, count]) => (
           <div key={est} className="dashboard__card dashboard__card--sm">
             <span className="dashboard__card-value">{count}</span>
-            <span className="dashboard__card-label">{est}</span>
+            <span className="dashboard__card-label">{capitalize(est)}</span>
           </div>
         ))}
       </div>

@@ -6,7 +6,10 @@
 
 .app__content {
   flex: 1;
-  padding: var(--space-3);
+  padding-top: calc(48px + var(--space-3));
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
+  padding-bottom: var(--space-3);
 }
 
 .app__topbar {

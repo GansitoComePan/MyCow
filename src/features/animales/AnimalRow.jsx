@@ -1,3 +1,4 @@
+import { capitalize } from '../../utils.js';
 import './AnimalRow.css';
 
 const DASH = '—';
@@ -32,18 +33,18 @@ export function AnimalRow({ animal, onClick }) {
           <span
             className={`animal-row__badge ${ESTADO_VIDA_CLASS[animal.estado_vida] ?? ''}`}
           >
-            {animal.estado_vida}
+            {capitalize(animal.estado_vida)}
           </span>
         </div>
 
         <dl className="animal-row__details">
           <div>
             <dt>Categoría</dt>
-            <dd>{animal.categoria}</dd>
+            <dd>{capitalize(animal.categoria)}</dd>
           </div>
           <div>
             <dt>Sexo</dt>
-            <dd>{fallback(animal.sexo)}</dd>
+            <dd>{fallback(capitalize(animal.sexo))}</dd>
           </div>
           <div>
             <dt>Raza</dt>

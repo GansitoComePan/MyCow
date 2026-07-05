@@ -3,28 +3,65 @@ import { useAnimales } from '../../hooks/useAnimales.js';
 import { AnimalesFilters } from './AnimalesFilters.jsx';
 import { AnimalRow } from './AnimalRow.jsx';
 import { AnimalForm } from './AnimalForm.jsx';
-import { applyFilters, uniqueValues } from './filters.js';
+import { filterByEstadoVida } from './filters.js';
 import { db as defaultDb } from '../../sync/db.js';
 import './AnimalesList.css';
+
+const TABS = [
+  { key: '', label: 'Todas' },
+  { key: 'vaca', label: 'Vacas' },
+  { key: 'semental', label: 'Sementales' },
+  { key: 'cria', label: 'Crías' },
+];
+
+const SORT_OPTIONS = [
+  { key: 'arete', label: 'Arete morado' },
+  { key: 'potrero', label: 'Potrero' },
+];
+
+function applySort(animales, sortBy) {
+  if (sortBy === 'potrero') {
+    return [...animales].sort((a, b) =>
+      (a.potrero_nombre ?? '').localeCompare(b.potrero_nombre ?? '')
+    );
+  }
+  return [...animales].sort((a, b) => {
+    const na = Number(a.arete_local);
+    const nb = Number(b.arete_local);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return (a.arete_local ?? '').localeCompare(b.arete_local ?? '', undefined, { numeric: true });
+  });
+}
 
 /**
  * Lista reactiva de animales activos + alta/edición vía AnimalForm (modal).
  * Tras guardar, useAnimales (useLiveQuery) refleja el cambio solo; el form
  * sólo se cierra, sin refetch manual.
+ *
+ * Tabs de categoría (Todas / Vacas / Sementales / Crías) y selector de
+ * orden (arete morado / potrero).
  */
 export function AnimalesList({ db = defaultDb } = {}) {
   const { animales, isLoading } = useAnimales(db);
-  const [categoria, setCategoria] = useState('');
+  const [categoriaTab, setCategoriaTab] = useState('');
+  const [sortBy, setSortBy] = useState('arete');
   const [estadoVida, setEstadoVida] = useState('');
   // null = cerrado; { clientId: null } = alta; { clientId } = edición.
   const [formTarget, setFormTarget] = useState(null);
 
-  const categoriaOptions = useMemo(() => uniqueValues(animales, 'categoria'), [animales]);
-  const estadoVidaOptions = useMemo(() => uniqueValues(animales, 'estado_vida'), [animales]);
-  const filtered = useMemo(
-    () => applyFilters(animales, { categoria, estadoVida }),
-    [animales, categoria, estadoVida]
-  );
+  const estadoVidaOptions = useMemo(() => {
+    const values = [...new Set(animales.map((a) => a.estado_vida).filter((v) => v != null))];
+    return values.sort();
+  }, [animales]);
+
+  const filtered = useMemo(() => {
+    let result = animales;
+    if (categoriaTab) {
+      result = result.filter((a) => a.categoria === categoriaTab);
+    }
+    result = filterByEstadoVida(result, estadoVida);
+    return applySort(result, sortBy);
+  }, [animales, categoriaTab, estadoVida, sortBy]);
 
   function handleCreate() {
     setFormTarget({ clientId: null });
@@ -47,13 +84,26 @@ export function AnimalesList({ db = defaultDb } = {}) {
         </button>
       </header>
 
+      <div className="animales-list__tabs" role="tablist">
+        {TABS.map(({ key, label }) => (
+          <button
+            key={key}
+            role="tab"
+            aria-selected={categoriaTab === key}
+            className={`animales-list__tab${categoriaTab === key ? ' animales-list__tab--active' : ''}`}
+            onClick={() => setCategoriaTab(key)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       <AnimalesFilters
-        categoriaOptions={categoriaOptions}
         estadoVidaOptions={estadoVidaOptions}
-        categoria={categoria}
         estadoVida={estadoVida}
-        onCategoriaChange={setCategoria}
         onEstadoVidaChange={setEstadoVida}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
 
       {isLoading && <p className="animales-list__status">Cargando animales…</p>}
