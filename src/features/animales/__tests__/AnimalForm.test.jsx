@@ -56,7 +56,7 @@ describe('AnimalForm', () => {
 
   it('precarga un animal existente en modo edición', async () => {
     await db.animales.put({
-      client_id: 'e1', arete_local: '3', categoria: 'vaca', sexo: 'macho',
+      client_id: 'e1', arete_local: '3', categoria: 'vaca', sexo: 'hembra',
       updated_at: '2026-01-01T00:00:00.000Z', deleted_at: null,
     });
 
@@ -66,6 +66,56 @@ describe('AnimalForm', () => {
     expect(screen.getByLabelText('Categoría *')).toHaveValue('vaca');
     expect(screen.getByText('Editar animal')).toBeInTheDocument();
     expect(screen.getByText('Retirar')).toBeInTheDocument();
+  });
+
+  it('seleccionar vaca auto-asigna sexo hembra y deshabilita el selector', async () => {
+    render(<AnimalForm db={db} onClose={() => {}} />);
+
+    fireEvent.change(screen.getByLabelText('Categoría *'), { target: { value: 'vaca' } });
+
+    expect(screen.getByLabelText('Sexo')).toHaveValue('hembra');
+    expect(screen.getByLabelText('Sexo')).toBeDisabled();
+  });
+
+  it('seleccionar semental auto-asigna sexo macho y deshabilita el selector', async () => {
+    render(<AnimalForm db={db} onClose={() => {}} />);
+
+    fireEvent.change(screen.getByLabelText('Categoría *'), { target: { value: 'semental' } });
+
+    expect(screen.getByLabelText('Sexo')).toHaveValue('macho');
+    expect(screen.getByLabelText('Sexo')).toBeDisabled();
+  });
+
+  it('seleccionar cría deja el sexo editable sin valor forzado', async () => {
+    render(<AnimalForm db={db} onClose={() => {}} />);
+
+    fireEvent.change(screen.getByLabelText('Categoría *'), { target: { value: 'cria' } });
+
+    expect(screen.getByLabelText('Sexo')).toHaveValue('');
+    expect(screen.getByLabelText('Sexo')).not.toBeDisabled();
+  });
+
+  it('bloquea guardar una vaca con sexo macho (carga de datos legacy)', async () => {
+    // Simula un animal existente con datos inválidos (vaca + macho)
+    await db.animales.put({
+      client_id: 'legacy-vaca',
+      arete_local: '99',
+      categoria: 'vaca',
+      sexo: 'macho',
+      updated_at: '2026-01-01T00:00:00.000Z',
+      deleted_at: null,
+    });
+
+    render(<AnimalForm db={db} clientId="legacy-vaca" onClose={() => {}} />);
+
+    await screen.findByDisplayValue('99');
+
+    expect(screen.getByText('Guardar')).toBeDisabled();
+
+    fireEvent.click(screen.getByText('Guardar'));
+
+    expect(await db.animales.count()).toBe(1);
+    expect(await db.outbox.count()).toBe(0);
   });
 
   it('retirar: confirma, hace softDelete y cierra', async () => {
@@ -110,8 +160,8 @@ describe('AnimalesList — integración con AnimalForm', () => {
     });
 
     render(<AnimalesList db={db} />);
-    await screen.findByText('Arete 20');
-    fireEvent.click(screen.getByRole('button', { name: /Editar animal, arete 20/ }));
+    await screen.findByText('Vaca Arete 20');
+    fireEvent.click(screen.getByRole('button', { name: /Editar animal, Vaca arete 20/ }));
 
     expect(await screen.findByText('Editar animal')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('20')).toBeInTheDocument();
@@ -126,6 +176,6 @@ describe('AnimalesList — integración con AnimalForm', () => {
     fireEvent.click(screen.getByText('Guardar'));
 
     await waitFor(() => expect(screen.queryByText('Nuevo animal')).not.toBeInTheDocument());
-    expect(await screen.findByText('Arete 80')).toBeInTheDocument();
+    expect(await screen.findByText('Vaca Arete 80')).toBeInTheDocument();
   });
 });

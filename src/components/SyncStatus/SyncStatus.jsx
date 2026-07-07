@@ -43,6 +43,7 @@ export function SyncStatus({ db = defaultDb } = {}) {
   const navigate = useNavigate();
   const { isOnline, pendingCount, isSyncing, lastPullAt, syncNow } = useSyncStatus();
   const [expanded, setExpanded] = useState(false);
+  const adminMode = localStorage.getItem('sync_admin_mode') === 'true';
 
   const pendingItems = useLiveQuery(
     () => db.outbox.where('status').anyOf('pending', 'failed', 'waiting_ref').toArray(),
@@ -78,15 +79,19 @@ export function SyncStatus({ db = defaultDb } = {}) {
       <span className="sync-status__label">{isOnline ? 'En línea' : 'Sin conexión'}</span>
 
       {pendingCount > 0 ? (
-        <button className="sync-status__pending-btn" onClick={() => setExpanded(!expanded)}>
-          {pendingCount} por sincronizar
-          <span className={`sync-status__arrow ${expanded ? 'sync-status__arrow--open' : ''}`}>▸</span>
-        </button>
+        adminMode ? (
+          <button className="sync-status__pending-btn" onClick={() => setExpanded(!expanded)}>
+            {pendingCount} por sincronizar
+            <span className={`sync-status__arrow ${expanded ? 'sync-status__arrow--open' : ''}`}>▸</span>
+          </button>
+        ) : (
+          <span className="sync-status__count">{pendingCount} por sincronizar</span>
+        )
       ) : (
         <span className="sync-status__synced">Sincronizado</span>
       )}
 
-      {expanded && pendingItems && pendingItems.length > 0 && (
+      {adminMode && expanded && pendingItems && pendingItems.length > 0 && (
         <div className="sync-status__pending-list">
           {failedCount > 0 && (
             <button className="sync-status__retry-all" onClick={handleRetryAll}>

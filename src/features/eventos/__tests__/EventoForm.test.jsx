@@ -51,7 +51,7 @@ describe('AnimalForm — eventos terminales', () => {
     expect(screen.queryByText('Registrar muerte')).not.toBeInTheDocument();
     expect(screen.queryByText('Mover a potrero')).not.toBeInTheDocument();
 
-    expect(screen.getByText('2026-06-15')).toBeInTheDocument();
+    expect(screen.getByText('15/06/2026')).toBeInTheDocument();
     expect(screen.getByText('vejez')).toBeInTheDocument();
   });
 
@@ -114,8 +114,8 @@ describe('AnimalesList — eventos terminales', () => {
 
     render(<AnimalesList db={db} />);
 
-    expect(await screen.findByText('Arete 50')).toBeInTheDocument();
-    const row = screen.getByText('Arete 50').closest('li');
+    expect(await screen.findByText('Vaca Arete 50')).toBeInTheDocument();
+    const row = screen.getByText('Vaca Arete 50').closest('li');
     expect(row).toHaveTextContent('Muerto');
   });
 });

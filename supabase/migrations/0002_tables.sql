@@ -49,7 +49,10 @@ CREATE TABLE IF NOT EXISTS animales (
   deleted_at          TIMESTAMPTZ,
   -- Regla de negocio 5: un semental es necesariamente macho.
   CONSTRAINT chk_semental_es_macho
-    CHECK (categoria <> 'semental' OR sexo = 'macho')
+    CHECK (categoria <> 'semental' OR sexo = 'macho'),
+  -- Regla de negocio 6: una vaca es necesariamente hembra.
+  CONSTRAINT chk_vaca_es_hembra
+    CHECK (categoria <> 'vaca' OR sexo = 'hembra')
 );
 COMMENT ON TABLE animales IS 'Entidad unificada de todo el ganado; vaca/semental/cría/novillo son valores de categoria.';
 COMMENT ON COLUMN animales.potrero_actual_id IS 'Cache del último movimiento; la fuente de verdad es la vista v_potrero_actual.';

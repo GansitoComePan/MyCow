@@ -1,5 +1,6 @@
 import { useMovimientos } from './useMovimientos.js';
 import { db as defaultDb } from '../../sync/db.js';
+import { formatDate } from '../../utils.js';
 import './MovimientoHistorial.css';
 
 /**
@@ -20,7 +21,7 @@ export function MovimientoHistorial({ db = defaultDb, animalClientId }) {
     <ul className="movimiento-historial">
       {movimientos.map((m) => (
         <li key={m.client_id} className="movimiento-historial__row">
-          <span className="movimiento-historial__fecha">{m.fecha}</span>
+          <span className="movimiento-historial__fecha">{formatDate(m.fecha)}</span>
           <span className="movimiento-historial__ruta">
             {m.potrero_origen_nombre ?? 'Alta'} → {m.potrero_destino_nombre}
           </span>

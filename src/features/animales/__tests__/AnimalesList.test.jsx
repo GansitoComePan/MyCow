@@ -47,13 +47,13 @@ describe('AnimalesList', () => {
 
     const rows = await screen.findAllByRole('listitem');
     expect(rows).toHaveLength(7);
-    expect(screen.queryByText('Arete 999')).not.toBeInTheDocument();
+    expect(screen.queryByText('Vaca Arete 999')).not.toBeInTheDocument();
   });
 
   it('la vaca_1 casi vacía no rompe el render y muestra "—" en campos faltantes', async () => {
     render(<AnimalesList db={db} />);
 
-    const row = (await screen.findByText('Arete 1')).closest('li');
+    const row = (await screen.findByText('Vaca Arete 1')).closest('li');
     expect(within(row).getByText('SINIIGA').nextSibling).toHaveTextContent('—');
     expect(within(row).getByText('Raza').nextSibling).toHaveTextContent('—');
     expect(within(row).getByText('Potrero actual').nextSibling).toHaveTextContent('—');
@@ -68,7 +68,7 @@ describe('AnimalesList', () => {
 
   it('resuelve el potrero actual por nombre', async () => {
     render(<AnimalesList db={db} />);
-    const row = (await screen.findByText('Arete 300')).closest('li');
+    const row = (await screen.findByText('Novillo Arete 300')).closest('li');
     expect(within(row).getByText('Potrero actual').nextSibling).toHaveTextContent('El Jagüey');
   });
 
@@ -81,9 +81,9 @@ describe('AnimalesList', () => {
     await waitFor(() => {
       expect(screen.getAllByRole('listitem')).toHaveLength(2);
     });
-    expect(screen.getByText('Arete 92')).toBeInTheDocument();
-    expect(screen.getByText('Arete 99')).toBeInTheDocument();
-    expect(screen.queryByText('Arete 1')).not.toBeInTheDocument();
+    expect(screen.getByText('Cría Arete 92')).toBeInTheDocument();
+    expect(screen.getByText('Cría Arete 99')).toBeInTheDocument();
+    expect(screen.queryByText('Vaca Arete 1')).not.toBeInTheDocument();
   });
 
   it('muestra estado vacío cuando no hay animales', async () => {

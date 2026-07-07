@@ -8,9 +8,9 @@ import { db as defaultDb } from '../../sync/db.js';
  * cada método delega en create/update/softDelete ya probados (10/10);
  * sólo añade encima:
  *
- *   - CHECK local semental=>macho (replica chk_semental_es_macho de
- *     0002_tables.sql) ANTES de escribir, para no ensuciar el outbox con un
- *     insert/update que el server rechazaría igual.
+ *   - CHECK local semental=>macho y vaca=>hembra (replica chk_semental_es_macho
+ *     y chk_vaca_es_hembra de 0002_tables.sql) ANTES de escribir, para no
+ *     ensuciar el outbox con un insert/update que el server rechazaría igual.
  *   - Ascenso de categoría: si `updateAnimal` cambia `categoria`, encola
  *     ADEMÁS un insert en historial_categoria con animal_id=client_id del
  *     animal. El orden causal del outbox (autoincrement, ver db.js) garantiza
@@ -35,8 +35,15 @@ export function useAnimalMutations(db = defaultDb) {
       }
     }
 
+    function assertVacaEsHembra({ categoria, sexo }) {
+      if (categoria === 'vaca' && sexo !== 'hembra') {
+        throw new Error('Una vaca debe ser hembra.');
+      }
+    }
+
     async function createAnimal(data) {
       assertSementalEsMacho(data);
+      assertVacaEsHembra(data);
       return writes.animales.create(data);
     }
 
@@ -46,7 +53,9 @@ export function useAnimalMutations(db = defaultDb) {
         throw new Error(`updateAnimal: no existe animal client_id=${clientId}`);
       }
 
-      assertSementalEsMacho({ ...existing, ...changes });
+      const merged = { ...existing, ...changes };
+      assertSementalEsMacho(merged);
+      assertVacaEsHembra(merged);
 
       const updated = await writes.animales.update(clientId, changes);
 

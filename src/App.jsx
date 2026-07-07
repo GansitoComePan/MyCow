@@ -1,8 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './features/auth/AuthProvider.jsx';
 import { useAuth } from './features/auth/useAuth.js';
 import { LoginScreen } from './features/auth/LoginScreen.jsx';
-import { SignOutButton } from './features/auth/SignOutButton.jsx';
 import { SyncProvider } from './providers/SyncProvider.jsx';
 import { SyncStatus } from './components/SyncStatus/SyncStatus.jsx';
 import { AnimalesList } from './features/animales/AnimalesList.jsx';
@@ -11,7 +10,7 @@ import { Dashboard } from './features/dashboard/Dashboard.jsx';
 import { PotrerosList } from './features/potreros/PotrerosList.jsx';
 import { Reportes } from './features/reportes/Reportes.jsx';
 import { Calendario } from './features/calendario/Calendario.jsx';
-import { ThemeToggle } from './theme/ThemeToggle.jsx';
+import { Settings } from './features/settings/Settings.jsx';
 import './App.css';
 
 function AppRoutes({ db }) {
@@ -22,12 +21,14 @@ function AppRoutes({ db }) {
       <Route path="/potreros" element={<PotrerosList db={db} />} />
       <Route path="/reportes" element={<Reportes />} />
       <Route path="/calendario" element={<Calendario />} />
+      <Route path="/configuracion" element={<Settings db={db} />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
 function AppShell({ db, engine, connectivity }) {
+  const navigate = useNavigate();
   const { session, loading } = useAuth();
 
   if (loading) {
@@ -42,8 +43,7 @@ function AppShell({ db, engine, connectivity }) {
     <SyncProvider db={db} engine={engine} connectivity={connectivity}>
       <div className="app">
         <div className="app__topbar">
-          <ThemeToggle />
-          <SignOutButton />
+          <button type="button" className="app__config-btn" onClick={() => navigate('/configuracion')} aria-label="Configuración">⚙</button>
         </div>
         <SyncStatus />
         <main className="app__content">

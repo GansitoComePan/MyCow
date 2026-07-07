@@ -36,11 +36,17 @@
   border-bottom-color: var(--brand-primary);
 }
 
+.bottom-nav__icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.bottom-nav__label {
+  font-family: var(--font-body);
+}
+
 @media (min-width: 768px) {
   .bottom-nav {
-    position: static;
     justify-content: center;
-    border-top: none;
-    border-bottom: 1px solid var(--border-color);
   }
 }

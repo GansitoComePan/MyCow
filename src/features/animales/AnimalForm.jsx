@@ -7,6 +7,7 @@ import { MovimientoForm } from '../movimientos/MovimientoForm.jsx';
 import { MovimientoHistorial } from '../movimientos/MovimientoHistorial.jsx';
 import { DefuncionForm } from '../eventos/DefuncionForm.jsx';
 import { useEventos } from '../eventos/useEventos.js';
+import { formatDate } from '../../utils.js';
 import './AnimalForm.css';
 
 // ENUMs replicados de 0001_extensions_and_enums.sql. Se hardcodean (a
@@ -102,10 +103,18 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
   }, [db, clientId, isEdit]);
 
   function setField(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [field]: value };
+      if (field === 'categoria') {
+        if (value === 'vaca') next.sexo = 'hembra';
+        else if (value === 'semental') next.sexo = 'macho';
+      }
+      return next;
+    });
   }
 
   const sementalInvalido = form.categoria === 'semental' && form.sexo !== 'macho';
+  const vacaInvalida = form.categoria === 'vaca' && form.sexo !== 'hembra';
 
   async function handleSubmit() {
     setError(null);
@@ -118,12 +127,21 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
       setError('Un semental debe ser macho: corrige el sexo o la categoría antes de guardar.');
       return;
     }
+    if (vacaInvalida) {
+      setError('Una vaca debe ser hembra: corrige el sexo o la categoría antes de guardar.');
+      return;
+    }
+
+    const sexo =
+      form.categoria === 'vaca' ? 'hembra' :
+      form.categoria === 'semental' ? 'macho' :
+      form.sexo || null;
 
     const payload = {
       arete_local: blankToNull(form.arete_local),
       arete_siniiga: blankToNull(form.arete_siniiga),
       categoria: form.categoria,
-      sexo: form.sexo || null,
+      sexo,
       raza: blankToNull(form.raza),
       color: blankToNull(form.color),
       fecha_nacimiento: form.fecha_nacimiento || null,
@@ -204,7 +222,11 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
 
           <label className="animal-form__field">
             <span>Sexo</span>
-            <select value={form.sexo} onChange={(e) => setField('sexo', e.target.value)}>
+            <select
+              value={form.sexo}
+              onChange={(e) => setField('sexo', e.target.value)}
+              disabled={form.categoria === 'vaca' || form.categoria === 'semental'}
+            >
               <option value="">Selecciona…</option>
               {SEXO_OPTIONS.map((s) => (
                 <option key={s} value={s}>
@@ -217,6 +239,11 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
           {sementalInvalido && (
             <p className="animal-form__error" role="alert">
               Un semental debe ser macho.
+            </p>
+          )}
+          {vacaInvalida && (
+            <p className="animal-form__error" role="alert">
+              Una vaca debe ser hembra.
             </p>
           )}
 
@@ -261,7 +288,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
             value={form.madre_id}
             onChange={(v) => setField('madre_id', v)}
             excludeClientId={clientId}
-            preferredCategoria={null}
+            sexo="hembra"
           />
 
           <ParentSelect
@@ -270,7 +297,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
             value={form.padre_id}
             onChange={(v) => setField('padre_id', v)}
             excludeClientId={clientId}
-            preferredCategoria="semental"
+            sexo="macho"
           />
 
           <label className="animal-form__field">
@@ -322,7 +349,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
                 <dl className="animal-form__evento-detalle">
                   <div>
                     <dt>Fecha de muerte</dt>
-                    <dd>{eventos.defuncion.fecha_muerte}</dd>
+                    <dd>{formatDate(eventos.defuncion.fecha_muerte)}</dd>
                   </div>
                   {eventos.defuncion.causa && (
                     <div>
@@ -371,7 +398,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, onClose }) {
               type="button"
               className="animal-form__save"
               onClick={handleSubmit}
-              disabled={saving || sementalInvalido}
+              disabled={saving || sementalInvalido || vacaInvalida}
             >
               Guardar
             </button>

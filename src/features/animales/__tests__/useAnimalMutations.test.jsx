@@ -57,6 +57,38 @@ describe('useAnimalMutations', () => {
     expect(await db.outbox.count()).toBe(0);
   });
 
+  it('createAnimal: bloquea una vaca macho antes de llegar al outbox', async () => {
+    const { result } = renderHook(() => useAnimalMutations(db));
+
+    await expect(
+      act(async () => {
+        await result.current.createAnimal({ categoria: 'vaca', sexo: 'macho' });
+      })
+    ).rejects.toThrow(/vaca/i);
+
+    expect(await db.animales.count()).toBe(0);
+    expect(await db.outbox.count()).toBe(0);
+  });
+
+  it('updateAnimal: bloquea cambiar a vaca si el sexo sigue siendo macho', async () => {
+    const { result } = renderHook(() => useAnimalMutations(db));
+
+    let cria;
+    await act(async () => {
+      cria = await result.current.createAnimal({ categoria: 'cria', sexo: 'macho' });
+    });
+    await db.outbox.clear();
+
+    await expect(
+      act(async () => {
+        await result.current.updateAnimal(cria.client_id, { categoria: 'vaca' });
+      })
+    ).rejects.toThrow(/vaca/i);
+
+    expect(await db.outbox.count()).toBe(0);
+    expect((await db.animales.get(cria.client_id)).categoria).toBe('cria');
+  });
+
   it('updateAnimal: bloquea ascender a semental si el sexo sigue siendo hembra', async () => {
     const { result } = renderHook(() => useAnimalMutations(db));
 

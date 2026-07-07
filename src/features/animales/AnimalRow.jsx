@@ -26,10 +26,10 @@ export function AnimalRow({ animal, onClick }) {
         type="button"
         className="animal-row__tap"
         onClick={onClick}
-        aria-label={`Editar animal, arete ${fallback(animal.arete_local)}`}
+        aria-label={`Editar animal, ${capitalize(animal.categoria)} arete ${fallback(animal.arete_local)}`}
       >
         <div className="animal-row__header">
-          <span className="animal-row__arete">Arete {fallback(animal.arete_local)}</span>
+          <span className="animal-row__arete">{capitalize(animal.categoria)} Arete {fallback(animal.arete_local)}</span>
           <span
             className={`animal-row__badge ${ESTADO_VIDA_CLASS[animal.estado_vida] ?? ''}`}
           >

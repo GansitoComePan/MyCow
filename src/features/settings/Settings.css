@@ -1,0 +1,228 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.settings h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.settings__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+}
+
+.settings__section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.settings__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.settings__value {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.settings__status {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings__status--online {
+  color: var(--status-online);
+}
+
+.settings__status--offline {
+  color: var(--status-offline);
+}
+
+.settings__toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  background: var(--border-color);
+  cursor: pointer;
+  padding: 0;
+}
+
+.settings__toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  transition: transform 0.15s ease;
+}
+
+.settings__toggle-knob--on {
+  transform: translateX(20px);
+  background: var(--brand-primary);
+}
+
+.settings__pending-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  border: none;
+  background: transparent;
+  color: var(--status-pending);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.settings__arrow {
+  font-size: 10px;
+  transition: transform 0.15s ease;
+}
+
+.settings__arrow--open {
+  transform: rotate(90deg);
+}
+
+.settings__pending-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings__retry-all {
+  align-self: flex-end;
+  border: 1px solid var(--status-error, #e53e3e);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--status-error, #e53e3e);
+  padding: 2px var(--space-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: var(--space-1);
+}
+
+.settings__pending-item {
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.settings__pending-item[data-status="failed"] {
+  border-left: 3px solid var(--status-error, #e53e3e);
+}
+
+.settings__pending-item[data-status="waiting_ref"] {
+  border-left: 3px solid var(--status-warning, #d69e2e);
+}
+
+.settings__item-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.settings__item-main:hover {
+  background: color-mix(in srgb, var(--bg-primary) 90%, var(--brand-primary));
+}
+
+.settings__item-op {
+  font-weight: 700;
+  min-width: 4ch;
+}
+
+.settings__item-entity {
+  color: var(--text-secondary);
+  min-width: 9ch;
+}
+
+.settings__item-label {
+  font-weight: 600;
+}
+
+.settings__item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-2) var(--space-1);
+  font-size: 11px;
+}
+
+.settings__item-error {
+  color: var(--status-error, #e53e3e);
+  flex: 1;
+  word-break: break-all;
+}
+
+.settings__item-waiting {
+  color: var(--status-warning, #d69e2e);
+}
+
+.settings__item-pending {
+  color: var(--text-tertiary);
+}
+
+.settings__retry-btn {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--status-error, #e53e3e);
+  background: transparent;
+  color: var(--status-error, #e53e3e);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings__retry-btn:hover {
+  background: color-mix(in srgb, var(--status-error) 15%, transparent);
+}
+
+.settings__sign-out {
+  border: 1px solid var(--status-danger);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--status-danger);
+  padding: var(--space-2) var(--space-4);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.settings__sign-out:hover {
+  background: color-mix(in srgb, var(--status-danger) 10%, transparent);
+}

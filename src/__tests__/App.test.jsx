@@ -145,6 +145,8 @@ describe('App — gate de sesión', () => {
 
     await waitFor(() => expect(engine.start).toHaveBeenCalledTimes(1));
 
+    fireEvent.click(screen.getByRole('button', { name: 'Configuración' }));
+    await screen.findByRole('button', { name: 'Cerrar sesión' });
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
 
     await waitFor(() =>

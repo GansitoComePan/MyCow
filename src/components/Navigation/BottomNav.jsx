@@ -12,8 +12,8 @@ const links = [
 export function BottomNav() {
   return (
     <nav className="bottom-nav">
-      {links.map(({ to, label }) => (
-        <NavLink key={to} to={to} end={to === '/'} className="bottom-nav__item">
+      {links.map(({ to, label, ariaLabel }) => (
+        <NavLink key={to} to={to} end={to === '/'} className="bottom-nav__item" aria-label={ariaLabel}>
           {label}
         </NavLink>
       ))}
