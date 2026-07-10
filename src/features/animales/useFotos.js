@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { v4 as uuidv4 } from 'uuid';
 import { writesFor } from '../../sync/writes.js';
@@ -48,27 +48,34 @@ function fotoUrl(foto) {
 export function useFotos(animalClientId, db = defaultDb) {
   const writes = useMemo(() => writesFor(db), [db]);
 
+  // Estado local para mostrar la imagen instantáneamente al agregarla,
+  // sin esperar el ciclo async del live query.
+  const [localDataUrl, setLocalDataUrl] = useState(null);
+  useEffect(() => { setLocalDataUrl(null); }, [animalClientId]);
+
   const fotos = useLiveQuery(
     () => db.fotos.filter((f) => f.animal_id === animalClientId && f.deleted_at == null).toArray(),
     [db, animalClientId],
     []
   );
 
-  const fotosData = useLiveQuery(
-    () => {
-      if (fotos.length === 0) return [];
-      return Promise.all(
-        fotos.map((f) =>
-          db.fotos_data.get(f.client_id).then((d) => ({ client_id: f.client_id, data_url: d?.data_url ?? null }))
-        )
-      );
-    },
-    [db, fotos],
-    []
+  const fotoPrincipal = fotos.length > 0 ? fotos[0] : null;
+
+  const persistedDataUrl = useLiveQuery(
+    () => fotoPrincipal
+      ? db.fotos_data.get(fotoPrincipal.client_id).then((d) => d?.data_url ?? null)
+      : null,
+    [db, fotoPrincipal],
+    null
   );
+
+  // localDataUrl (inmediato) → persistedDataUrl (después de live query) → Storage URL
+  const fotoPrincipalUrl = localDataUrl ?? persistedDataUrl
+    ?? (fotoPrincipal?.storage_path ? fotoUrl(fotoPrincipal) : null);
 
   async function addFoto(file) {
     const { data_url, blob } = await resizeImage(file);
+    setLocalDataUrl(data_url); // render inmediato
 
     let storage_path = null;
     if (navigator.onLine) {
@@ -100,18 +107,11 @@ export function useFotos(animalClientId, db = defaultDb) {
     await db.fotos_data.delete(fotoClientId);
   }
 
-  const fotoPrincipal = fotos.length > 0 ? fotos[0] : null;
-  const fotoPrincipalRec = fotosData.find((d) => d.client_id === fotoPrincipal?.client_id);
-  const fotoPrincipalUrl = fotoPrincipal?.storage_path
-    ? fotoUrl(fotoPrincipal)
-    : (fotoPrincipalRec?.data_url ?? null);
-
   return {
     fotos,
-    fotosData,
     fotoPrincipal,
     fotoPrincipalUrl,
-    fotoPrincipalData: fotoPrincipalRec?.data_url ?? null,
+    fotoPrincipalData: persistedDataUrl,
     addFoto,
     removeFoto,
     fotoUrl: (f) => fotoUrl(f),

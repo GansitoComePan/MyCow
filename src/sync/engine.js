@@ -74,6 +74,14 @@ const FK_FIELDS = {
   fotos: { animal_id: 'animales' },
 };
 
+// FKs opcionales: si el referenciado no existe localmente, se ponen a null
+// en vez de atascar la op en waiting_ref. Solo aplica a FKs de campos
+// cacheados/derivados (potrero_actual_id), no a FKs de negocio (madre_id).
+const OPTIONAL_FKS = new Set([
+  'animales.potrero_actual_id',
+  'movimientos.potrero_origen_id',
+]);
+
 // Una referencia que todavía no sincronizó NO es un fallo: es un estado de
 // ESPERA legítimo del offline-first (la cría puede crearse muchos ciclos
 // antes que su madre). Se distingue con esta clase de error para que push()
@@ -93,6 +101,12 @@ async function resolveForeignKeys(db, entity, payload) {
 
     const target = await db[targetEntity].get(localId);
     if (!target) {
+      // Si la FK es opcional y el referenciado no existe, limpiamos el
+      // campo en lugar de atascar la operación esperando para siempre.
+      if (OPTIONAL_FKS.has(`${entity}.${field}`)) {
+        resolved[field] = null;
+        continue;
+      }
       throw new UnresolvedReferenceError(
         `FK ${entity}.${field}: ${targetEntity}/${localId} no existe localmente (aún no sincronizado)`
       );
@@ -268,6 +282,21 @@ export function createEngine({ db, supabase, config = syncConfig } = {}) {
     // (client_id) nunca sea nula. Ver nota de PK en db.js.
     const key = remote.client_id ?? remote.id;
     const normalized = { ...remote, client_id: key };
+
+    // Traduce FKs devueltas por el server (id real) de vuelta a client_id
+    // local, para que las queries de la UI (useFotos, etc.) sigan match.
+    const fkMap = FK_FIELDS[entity];
+    if (fkMap) {
+      for (const [field, targetEntity] of Object.entries(fkMap)) {
+        const serverId = normalized[field];
+        if (serverId == null) continue;
+        // Busca un registro local del target cuyo `id` = serverId.
+        const target = await db[targetEntity].where('id').equals(serverId).first();
+        if (target?.client_id) {
+          normalized[field] = target.client_id;
+        }
+      }
+    }
 
     const local = await db[entity].get(key);
     const winner = resolveConflict(local, normalized);

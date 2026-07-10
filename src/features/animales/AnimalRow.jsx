@@ -29,12 +29,14 @@ export function AnimalRow({ animal, onClick, db = defaultDb }) {
     async () => {
       const f = await db.fotos.filter((f) => f.animal_id === animal.client_id && f.deleted_at == null).first();
       if (!f) return null;
+      // Prioriza data_url local sobre Storage URL (requiere bucket público).
+      const d = await db.fotos_data.get(f.client_id);
+      if (d?.data_url) return d.data_url;
       if (f.storage_path) {
         const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(f.storage_path);
         return publicUrl;
       }
-      const d = await db.fotos_data.get(f.client_id);
-      return d?.data_url ?? null;
+      return null;
     },
     [db, animal.client_id],
     null
