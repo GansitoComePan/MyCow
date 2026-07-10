@@ -1,4 +1,4 @@
-import { capitalize } from '../../utils.js';
+import { capitalize, categoriaLabel } from '../../utils.js';
 import './AnimalRow.css';
 
 const DASH = '—';
@@ -26,10 +26,10 @@ export function AnimalRow({ animal, onClick }) {
         type="button"
         className="animal-row__tap"
         onClick={onClick}
-        aria-label={`Editar animal, ${capitalize(animal.categoria)} arete ${fallback(animal.arete_local)}`}
+        aria-label={`Editar animal, ${categoriaLabel(animal.categoria, animal.sexo)} arete ${fallback(animal.arete_local)}`}
       >
         <div className="animal-row__header">
-          <span className="animal-row__arete">{capitalize(animal.categoria)} Arete {fallback(animal.arete_local)}</span>
+          <span className="animal-row__arete">{categoriaLabel(animal.categoria, animal.sexo)} Arete {fallback(animal.arete_local)}</span>
           <span
             className={`animal-row__badge ${ESTADO_VIDA_CLASS[animal.estado_vida] ?? ''}`}
           >

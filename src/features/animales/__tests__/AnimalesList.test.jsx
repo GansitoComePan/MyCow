@@ -81,8 +81,8 @@ describe('AnimalesList', () => {
     await waitFor(() => {
       expect(screen.getAllByRole('listitem')).toHaveLength(2);
     });
-    expect(screen.getByText('Cría Arete 92')).toBeInTheDocument();
-    expect(screen.getByText('Cría Arete 99')).toBeInTheDocument();
+    expect(screen.getByText('Becerro Arete 92')).toBeInTheDocument();
+    expect(screen.getByText('Becerra Arete 99')).toBeInTheDocument();
     expect(screen.queryByText('Vaca Arete 1')).not.toBeInTheDocument();
   });
 
