@@ -44,6 +44,7 @@ export function Settings({ db = defaultDb } = {}) {
   const [expanded, setExpanded] = useState(false);
 
   const [adminMode, setAdminMode] = useState(() => localStorage.getItem('sync_admin_mode') === 'true');
+  const [showSyncButton, setShowSyncButton] = useState(() => localStorage.getItem('sync_show_button') !== 'false');
 
   const isDark = theme === 'dark' || (!theme && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
 
@@ -110,6 +111,18 @@ export function Settings({ db = defaultDb } = {}) {
             aria-label={adminMode ? 'Desactivar visualización de rutas' : 'Activar visualización de rutas'}
           >
             <span className={`settings__toggle-knob ${adminMode ? 'settings__toggle-knob--on' : ''}`} />
+          </button>
+        </label>
+
+        <label className="settings__row">
+          <span>Botón de sincronización manual</span>
+          <button
+            type="button"
+            className="settings__toggle"
+            onClick={() => { const v = !showSyncButton; setShowSyncButton(v); localStorage.setItem('sync_show_button', v); }}
+            aria-label={showSyncButton ? 'Ocultar botón de sync' : 'Mostrar botón de sync'}
+          >
+            <span className={`settings__toggle-knob ${showSyncButton ? 'settings__toggle-knob--on' : ''}`} />
           </button>
         </label>
 

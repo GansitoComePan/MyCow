@@ -44,6 +44,7 @@ export function SyncStatus({ db = defaultDb } = {}) {
   const { isOnline, pendingCount, isSyncing, lastPullAt, syncNow } = useSyncStatus();
   const [expanded, setExpanded] = useState(false);
   const adminMode = localStorage.getItem('sync_admin_mode') === 'true';
+  const showSyncButton = localStorage.getItem('sync_show_button') !== 'false';
 
   const pendingItems = useLiveQuery(
     () => db.outbox.where('status').anyOf('pending', 'failed', 'waiting_ref').toArray(),
@@ -89,6 +90,17 @@ export function SyncStatus({ db = defaultDb } = {}) {
         )
       ) : (
         <span className="sync-status__synced">Sincronizado</span>
+      )}
+
+      {isOnline && showSyncButton && (
+        <button
+          className="sync-status__button"
+          onClick={syncNow}
+          disabled={isSyncing}
+          title="Sincronizar ahora"
+        >
+          {isSyncing ? <span className="sync-status__spinner" /> : '↻'} Sync
+        </button>
       )}
 
       {adminMode && expanded && pendingItems && pendingItems.length > 0 && (
