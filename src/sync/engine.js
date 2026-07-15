@@ -338,6 +338,14 @@ export function createEngine({ db, supabase, config = syncConfig } = {}) {
     try {
       const pushResult = await push();
       const pullResult = await pull();
+      // Después del pull, las entidades referenciadas pueden haber llegado.
+      // Reseteamos waiting_ref → pending para que el próximo push las resuelva.
+      if (pullResult.applied > 0) {
+        const waitingRefs = await db.outbox.where('status').equals('waiting_ref').toArray();
+        for (const op of waitingRefs) {
+          await db.outbox.update(op.id, { status: 'pending' });
+        }
+      }
       result = { skipped: false, push: pushResult, pull: pullResult };
       return result;
     } finally {

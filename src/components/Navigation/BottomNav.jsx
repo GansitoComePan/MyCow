@@ -2,11 +2,11 @@ import { NavLink } from 'react-router-dom';
 import './BottomNav.css';
 
 const links = [
-  { to: '/', label: 'Resumen' },
-  { to: '/animales', label: 'Animales' },
-  { to: '/potreros', label: 'Potreros' },
-  { to: '/reportes', label: 'Reportes' },
-  { to: '/calendario', label: 'Calendario' },
+  { to: '/', label: 'Resumen', ariaLabel: 'Resumen del rancho' },
+  { to: '/animales', label: 'Animales', ariaLabel: 'Lista de animales' },
+  { to: '/potreros', label: 'Potreros', ariaLabel: 'Gestión de potreros' },
+  { to: '/reportes', label: 'Reportes', ariaLabel: 'Reportes y estadísticas' },
+  { to: '/calendario', label: 'Calendario', ariaLabel: 'Calendario de eventos' },
 ];
 
 export function BottomNav() {
