@@ -65,10 +65,6 @@ export function AnimalRow({ animal, onClick, db = defaultDb }) {
         </div>
 
         <dl className="animal-row__details">
-          <div>
-            <dt>Categoría</dt>
-            <dd>{capitalize(animal.categoria)}</dd>
-          </div>
           {animal.categoria === 'cria' && (
             <div>
               <dt>Sexo</dt>
