@@ -61,6 +61,10 @@ export function AnimalForm({ db = defaultDb, clientId = null, initialCategoria =
       if (initialCategoria === 'vaca') base.sexo = 'hembra';
       else if (initialCategoria === 'semental') base.sexo = 'macho';
     }
+    if (!isEdit) {
+      const saved = localStorage.getItem('last_potrero_id');
+      if (saved) base.potrero_actual_id = saved;
+    }
     return base;
   });
   const [error, setError] = useState(null);
@@ -168,6 +172,9 @@ export function AnimalForm({ db = defaultDb, clientId = null, initialCategoria =
       if (isEdit) {
         await updateAnimal(clientId, payload);
       } else {
+        if (payload.potrero_actual_id) {
+          localStorage.setItem('last_potrero_id', payload.potrero_actual_id);
+        }
         await createAnimal(payload);
       }
       onClose();
