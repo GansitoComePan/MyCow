@@ -38,6 +38,11 @@
   margin-right: auto;
 }
 
+.animal-row__nombre {
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
 .animal-row__badge {
   font-size: 12px;
   font-weight: 600;

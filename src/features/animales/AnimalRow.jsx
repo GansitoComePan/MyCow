@@ -53,7 +53,10 @@ export function AnimalRow({ animal, onClick, db = defaultDb }) {
           {fotoThumb && (
             <img src={fotoThumb} alt="" className="animal-row__thumb" />
           )}
-          <span className="animal-row__arete">{categoriaLabel(animal.categoria, animal.sexo)} Arete {fallback(animal.arete_local)}</span>
+          <span className="animal-row__arete">
+            {categoriaLabel(animal.categoria, animal.sexo)} Arete {fallback(animal.arete_local)}
+            {animal.nombre && <span className="animal-row__nombre"> — {animal.nombre}</span>}
+          </span>
           <span
             className={`animal-row__badge ${ESTADO_VIDA_CLASS[animal.estado_vida] ?? ''}`}
           >
