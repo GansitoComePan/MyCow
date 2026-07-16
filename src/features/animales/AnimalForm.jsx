@@ -27,6 +27,7 @@ function emptyForm() {
     sexo: '',
     raza: '',
     color: '',
+    nombre: '',
     fecha_nacimiento: '',
     estado_reproductivo: 'horra',
     madre_id: null,
@@ -108,6 +109,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, initialCategoria =
         sexo: rec.sexo ?? '',
         raza: rec.raza ?? '',
         color: rec.color ?? '',
+        nombre: rec.nombre ?? '',
         fecha_nacimiento: rec.fecha_nacimiento ?? '',
         estado_reproductivo: rec.estado_reproductivo ?? (rec.sexo === 'hembra' ? 'horra' : null),
         madre_id: rec.madre_id ?? null,
@@ -163,6 +165,7 @@ export function AnimalForm({ db = defaultDb, clientId = null, initialCategoria =
       sexo,
       raza: blankToNull(form.raza),
       color: blankToNull(form.color),
+      nombre: blankToNull(form.nombre),
       fecha_nacimiento: form.fecha_nacimiento || null,
       estado_reproductivo: form.sexo === 'hembra' ? (form.estado_reproductivo || 'na') : null,
       madre_id: form.madre_id || null,
@@ -316,6 +319,11 @@ export function AnimalForm({ db = defaultDb, clientId = null, initialCategoria =
           <label className="animal-form__field">
             <span>Color</span>
             <input type="text" value={form.color} onChange={(e) => setField('color', e.target.value)} />
+          </label>
+
+          <label className="animal-form__field">
+            <span>Nombre</span>
+            <input type="text" value={form.nombre} onChange={(e) => setField('nombre', e.target.value)} />
           </label>
 
           <label className="animal-form__field">
