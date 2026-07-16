@@ -25,6 +25,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.reportes__card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--brand-primary);
 }
 
 .reportes__card-icon {
@@ -34,19 +42,13 @@
 .reportes__card-title {
   font-size: 15px;
   font-weight: 600;
+  margin: 0;
 }
 
 .reportes__card-desc {
   font-size: 13px;
   color: var(--text-secondary);
   margin: 0;
-}
-
-.reportes__note {
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 13px;
-  margin-top: var(--space-6);
 }
 
 @media (min-width: 768px) {

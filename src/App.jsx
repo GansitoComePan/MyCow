@@ -9,6 +9,9 @@ import { BottomNav } from './components/Navigation/BottomNav.jsx';
 import { Dashboard } from './features/dashboard/Dashboard.jsx';
 import { PotrerosList } from './features/potreros/PotrerosList.jsx';
 import { Reportes } from './features/reportes/Reportes.jsx';
+import { ReporteInventario } from './features/reportes/ReporteInventario.jsx';
+import { ReporteMovimientos } from './features/reportes/ReporteMovimientos.jsx';
+import { ReporteBajas } from './features/reportes/ReporteBajas.jsx';
 import { Calendario } from './features/calendario/Calendario.jsx';
 import { Settings } from './features/settings/Settings.jsx';
 import './App.css';
@@ -20,6 +23,9 @@ function AppRoutes({ db }) {
       <Route path="/animales" element={<AnimalesList db={db} />} />
       <Route path="/potreros" element={<PotrerosList db={db} />} />
       <Route path="/reportes" element={<Reportes />} />
+      <Route path="/reportes/inventario" element={<ReporteInventario db={db} />} />
+      <Route path="/reportes/movimientos" element={<ReporteMovimientos db={db} />} />
+      <Route path="/reportes/bajas" element={<ReporteBajas db={db} />} />
       <Route path="/calendario" element={<Calendario />} />
       <Route path="/configuracion" element={<Settings db={db} />} />
       <Route path="*" element={<Navigate to="/" replace />} />
