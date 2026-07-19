@@ -23,7 +23,7 @@ function fallback(value) {
  * `fallback()`. La raza se muestra TAL CUAL viene ('Brangus' vs 'brangus');
  * no se normaliza casing en la UI.
  */
-export function AnimalRow({ animal, onClick, db = defaultDb }) {
+export function AnimalRow({ animal, onClick, selectionMode, selected, onToggle, db = defaultDb }) {
   const fotoThumb = useLiveQuery(
     async () => {
       const f = await db.fotos.filter((f) => f.animal_id === animal.client_id && f.deleted_at == null).first();
@@ -41,15 +41,30 @@ export function AnimalRow({ animal, onClick, db = defaultDb }) {
     null
   );
 
+  function handleClick() {
+    if (selectionMode) {
+      onToggle?.(animal.client_id);
+    } else {
+      onClick?.();
+    }
+  }
+
   return (
-    <li className="animal-row">
+    <li className={`animal-row${selected ? ' animal-row--selected' : ''}`}>
       <button
         type="button"
         className="animal-row__tap"
-        onClick={onClick}
-        aria-label={`Editar animal, ${categoriaLabel(animal.categoria, animal.sexo)} arete ${fallback(animal.arete_local)}`}
+        onClick={handleClick}
+        aria-label={selectionMode
+          ? `Seleccionar animal, ${categoriaLabel(animal.categoria, animal.sexo)} arete ${fallback(animal.arete_local)}`
+          : `Editar animal, ${categoriaLabel(animal.categoria, animal.sexo)} arete ${fallback(animal.arete_local)}`}
       >
         <div className="animal-row__header">
+          {selectionMode && (
+            <span className={`animal-row__checkbox${selected ? ' animal-row__checkbox--checked' : ''}`}>
+              {selected && '✓'}
+            </span>
+          )}
           {fotoThumb && (
             <img src={fotoThumb} alt="" className="animal-row__thumb" />
           )}

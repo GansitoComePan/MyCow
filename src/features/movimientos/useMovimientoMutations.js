@@ -53,10 +53,40 @@ export async function registrarMovimiento(db, { animal_id, potrero_destino_id, f
   });
 }
 
+/**
+ * registrarMovimientoBatch: mueve N animales al mismo potrero destino en UNA
+ * sola transacción Dexie. Skipea animales cuyo origen ya es el destino.
+ */
+export async function registrarMovimientoBatch(db, { animalIds, potrero_destino_id, fecha }) {
+  if (!potrero_destino_id) {
+    throw new Error('El potrero destino es obligatorio.');
+  }
+  return db.transaction('rw', db.movimientos, db.animales, db.outbox, async () => {
+    let moved = 0;
+    for (const animalId of animalIds) {
+      const animal = await db.animales.get(animalId);
+      if (!animal || animal.estado_vida !== 'activo') continue;
+      const potrero_origen_id = animal.potrero_actual_id ?? null;
+      if (potrero_destino_id === potrero_origen_id) continue;
+
+      await create(db, 'movimientos', {
+        animal_id: animalId,
+        potrero_origen_id,
+        potrero_destino_id,
+        fecha,
+      });
+      await update(db, 'animales', animalId, { potrero_actual_id: potrero_destino_id });
+      moved++;
+    }
+    return moved;
+  });
+}
+
 export function useMovimientoMutations(db = defaultDb) {
   return useMemo(
     () => ({
       registrarMovimiento: (data) => registrarMovimiento(db, data),
+      registrarMovimientoBatch: (data) => registrarMovimientoBatch(db, data),
     }),
     [db]
   );
