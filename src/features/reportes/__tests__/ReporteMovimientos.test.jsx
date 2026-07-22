@@ -31,7 +31,7 @@ describe('ReporteMovimientos', () => {
     expect(await screen.findByText(/No hay movimientos/)).toBeInTheDocument();
   });
 
-  it('renderiza tabla con movimientos', async () => {
+  it('renderiza tabla agrupada con conteo de animales', async () => {
     await db.potreros.bulkAdd([
       { client_id: 'p1', id: 'p1', nombre: 'A', updated_at: '2025-01-01', deleted_at: null },
       { client_id: 'p2', id: 'p2', nombre: 'B', updated_at: '2025-01-01', deleted_at: null },
@@ -46,9 +46,37 @@ describe('ReporteMovimientos', () => {
     renderWithRouter(<ReporteMovimientos db={db} />);
     const rows = await screen.findAllByRole('row');
     expect(rows.length).toBe(2);
-    expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('A')).toBeInTheDocument();
     expect(screen.getByText('B')).toBeInTheDocument();
+    expect(screen.getByText('1')).toBeInTheDocument();
+  });
+
+  it('muestra aretes al expandir grupo', async () => {
+    await db.potreros.bulkAdd([
+      { client_id: 'p1', id: 'p1', nombre: 'A', updated_at: '2025-01-01', deleted_at: null },
+      { client_id: 'p2', id: 'p2', nombre: 'B', updated_at: '2025-01-01', deleted_at: null },
+    ]);
+    await db.animales.bulkAdd([
+      { client_id: 'a1', id: 'a1', arete_local: '10', categoria: 'vaca', sexo: 'hembra', estado_vida: 'activo', created_at: '2025-01-01', deleted_at: null },
+      { client_id: 'a2', id: 'a2', arete_local: '20', categoria: 'toro', sexo: 'macho', estado_vida: 'activo', created_at: '2025-01-01', deleted_at: null },
+    ]);
+    await db.movimientos.bulkAdd([
+      { client_id: 'm1', id: 'm1', animal_id: 'a1', potrero_origen_id: 'p1', potrero_destino_id: 'p2', fecha: '2025-06-15', created_at: '2025-06-15T10:00', deleted_at: null },
+      { client_id: 'm2', id: 'm2', animal_id: 'a2', potrero_origen_id: 'p1', potrero_destino_id: 'p2', fecha: '2025-06-15', created_at: '2025-06-15T10:01', deleted_at: null },
+    ]);
+
+    renderWithRouter(<ReporteMovimientos db={db} />);
+    const toggle = await screen.findByText('2');
+    expect(screen.queryByText('10')).not.toBeInTheDocument();
+    expect(screen.queryByText('20')).not.toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(screen.getByText('20')).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.queryByText('10')).not.toBeInTheDocument();
+    expect(screen.queryByText('20')).not.toBeInTheDocument();
   });
 
   it('filtros de fecha filtran por rango', async () => {

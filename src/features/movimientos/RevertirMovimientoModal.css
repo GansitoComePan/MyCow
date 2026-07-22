@@ -1,4 +1,4 @@
-.bulk-move__overlay {
+.revertir-overlay {
   position: fixed;
   inset: 0;
   background: color-mix(in srgb, var(--color-cow-900) 55%, transparent);
@@ -8,7 +8,7 @@
   z-index: 30;
 }
 
-.bulk-move {
+.revertir-modal {
   width: 100%;
   max-width: 420px;
   max-height: 90vh;
@@ -21,16 +21,16 @@
 }
 
 @media (min-width: 640px) {
-  .bulk-move__overlay {
+  .revertir-overlay {
     align-items: center;
   }
-  .bulk-move {
+  .revertir-modal {
     border-radius: var(--radius-lg);
     max-height: 85vh;
   }
 }
 
-.bulk-move__header {
+.revertir-modal__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -38,11 +38,12 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.bulk-move__header h2 {
+.revertir-modal__header h2 {
   font-size: 18px;
+  margin: 0;
 }
 
-.bulk-move__close {
+.revertir-modal__close {
   border: none;
   background: transparent;
   color: var(--text-secondary);
@@ -51,14 +52,20 @@
   padding: var(--space-1) var(--space-2);
 }
 
-.bulk-move__body {
+.revertir-modal__body {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-4);
 }
 
-.bulk-move__field {
+.revertir-modal__summary {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.revertir-modal__field {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -66,9 +73,8 @@
   color: var(--text-secondary);
 }
 
-.bulk-move__field input,
-.bulk-move__field select,
-.bulk-move__field textarea {
+.revertir-modal__field input,
+.revertir-modal__field textarea {
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
@@ -78,25 +84,18 @@
   font-size: 14px;
 }
 
-.bulk-move__field textarea {
+.revertir-modal__field textarea {
   resize: vertical;
   min-height: 48px;
 }
 
-.bulk-move__error {
+.revertir-modal__error {
   color: var(--status-danger);
   font-size: 13px;
   margin: 0;
 }
 
-.bulk-move__result {
-  font-size: 15px;
-  color: var(--text-primary);
-  margin: 0;
-  padding: var(--space-2) 0;
-}
-
-.bulk-move__footer {
+.revertir-modal__footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -105,7 +104,7 @@
   border-top: 1px solid var(--border-color);
 }
 
-.bulk-move__cancel {
+.revertir-modal__cancel {
   border: 1px solid var(--border-color);
   background: transparent;
   color: var(--text-primary);
@@ -114,17 +113,17 @@
   font-size: 14px;
 }
 
-.bulk-move__save {
+.revertir-modal__confirm {
   border: none;
-  background: var(--brand-primary);
-  color: var(--text-on-brand);
+  background: var(--status-danger, #dc3545);
+  color: var(--text-on-brand, #fff);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-4);
   font-weight: 600;
   font-size: 14px;
 }
 
-.bulk-move__save:disabled,
-.bulk-move__cancel:disabled {
+.revertir-modal__confirm:disabled,
+.revertir-modal__cancel:disabled {
   opacity: 0.5;
 }

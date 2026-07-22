@@ -11,6 +11,7 @@ function todayIso() {
 export function BulkMoveModal({ db = defaultDb, animalIds, onClose }) {
   const [potreroDestinoId, setPotreroDestinoId] = useState('');
   const [fecha, setFecha] = useState(todayIso);
+  const [detalle, setDetalle] = useState('');
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState(null);
@@ -34,6 +35,7 @@ export function BulkMoveModal({ db = defaultDb, animalIds, onClose }) {
         animalIds,
         potrero_destino_id: potreroDestinoId,
         fecha,
+        detalle: detalle.trim() || null,
       });
       setResult(moved);
     } catch (err) {
@@ -96,6 +98,16 @@ export function BulkMoveModal({ db = defaultDb, animalIds, onClose }) {
           <label className="bulk-move__field">
             <span>Fecha</span>
             <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+          </label>
+
+          <label className="bulk-move__field">
+            <span>Detalle (opcional)</span>
+            <textarea
+              rows={2}
+              value={detalle}
+              onChange={(e) => setDetalle(e.target.value)}
+              placeholder="Motivo del movimiento…"
+            />
           </label>
 
           {error && (

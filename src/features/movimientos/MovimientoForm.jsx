@@ -18,6 +18,7 @@ export function MovimientoForm({ db = defaultDb, animalClientId, onClose }) {
 
   const [potreroDestinoId, setPotreroDestinoId] = useState('');
   const [fecha, setFecha] = useState(todayIso);
+  const [detalle, setDetalle] = useState('');
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -50,6 +51,7 @@ export function MovimientoForm({ db = defaultDb, animalClientId, onClose }) {
         animal_id: animalClientId,
         potrero_destino_id: potreroDestinoId,
         fecha,
+        detalle: detalle.trim() || null,
       });
       onClose();
     } catch (err) {
@@ -90,6 +92,16 @@ export function MovimientoForm({ db = defaultDb, animalClientId, onClose }) {
           <label className="movimiento-form__field">
             <span>Fecha</span>
             <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+          </label>
+
+          <label className="movimiento-form__field">
+            <span>Detalle (opcional)</span>
+            <textarea
+              rows={2}
+              value={detalle}
+              onChange={(e) => setDetalle(e.target.value)}
+              placeholder="Motivo del movimiento…"
+            />
           </label>
 
           {error && (

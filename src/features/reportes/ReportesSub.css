@@ -153,6 +153,44 @@
   background: var(--bg-surface-alt);
 }
 
+.reporte-sub__arete-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: var(--brand-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.reporte-sub__arete-toggle:hover {
+  opacity: 0.85;
+}
+
+.reporte-sub__arete-chevron {
+  font-size: 9px;
+}
+
+.reporte-sub__row-group {
+  cursor: default;
+}
+
+.reporte-sub__row-arete {
+  background: var(--bg-surface-alt);
+}
+
+.reporte-sub__arete-value {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
 @media (min-width: 768px) {
   .reporte-sub {
     padding-bottom: var(--space-4);
