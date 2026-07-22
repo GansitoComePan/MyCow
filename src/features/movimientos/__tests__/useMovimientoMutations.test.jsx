@@ -110,6 +110,20 @@ describe('registrarMovimiento', () => {
     expect(await db.movimientos.count()).toBe(0);
   });
 
+  it('fecha vacía o undefined se normaliza a hoy', async () => {
+    const destino = await create(db, 'potreros', { nombre: 'X' });
+    const animal = await create(db, 'animales', { arete_local: 'f1', categoria: 'vaca' });
+
+    const mov = await registrarMovimiento(db, {
+      animal_id: animal.client_id,
+      potrero_destino_id: destino.client_id,
+      fecha: '',
+    });
+
+    const today = new Date().toISOString().slice(0, 10);
+    expect(mov.fecha).toBe(today);
+  });
+
   // ── 4. Animal creado en la misma sesión offline (sin id real aún) ───────
   it('permite registrar el movimiento de un animal recién creado offline (sin id real), encolado por client_id', async () => {
     const destino = await create(db, 'potreros', { nombre: 'El Jagüey' });

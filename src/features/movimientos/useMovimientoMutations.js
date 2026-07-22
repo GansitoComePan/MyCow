@@ -2,6 +2,14 @@ import { useMemo } from 'react';
 import { create, update } from '../../sync/writes.js';
 import { db as defaultDb } from '../../sync/db.js';
 
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function normalizeFecha(fecha) {
+  return fecha || todayIso();
+}
+
 /**
  * registrarMovimiento: alta de un movimiento + espejo optimista del cache
  * animales.potrero_actual_id, en UNA sola transacción Dexie.
@@ -44,7 +52,7 @@ export async function registrarMovimiento(db, { animal_id, potrero_destino_id, f
       animal_id,
       potrero_origen_id,
       potrero_destino_id,
-      fecha,
+      fecha: normalizeFecha(fecha),
       detalle: detalle ?? null,
     });
 
@@ -74,7 +82,7 @@ export async function registrarMovimientoBatch(db, { animalIds, potrero_destino_
         animal_id: animalId,
         potrero_origen_id,
         potrero_destino_id,
-        fecha,
+        fecha: normalizeFecha(fecha),
         detalle: detalle ?? null,
       });
       await update(db, 'animales', animalId, { potrero_actual_id: potrero_destino_id });
@@ -115,7 +123,7 @@ export async function corregirLote(db, { potrero_origen_id, potrero_destino_id, 
         animal_id: animal.client_id,
         potrero_origen_id,
         potrero_destino_id,
-        fecha,
+        fecha: normalizeFecha(fecha),
         detalle: detalle ?? null,
       });
       await update(db, 'animales', animal.client_id, { potrero_actual_id: potrero_destino_id });
